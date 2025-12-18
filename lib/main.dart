@@ -60,8 +60,8 @@ class _MPSsState extends State<MPSs_Stateful> {
       metadata: const PairingMetadata(
         name: "JPYC Invoice App",
         description: "Generate EIP-681",
-        url: "https://github.com/ChocoTanaka/metamask_payment_subsystem",
-        icons: ["https://raw.githubusercontent.com/ChocoTanaka/metamask_payment_subsystem/master/cable_50dp.png"],
+        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
+        icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/cable_50dp.png"],
         redirect: Redirect(
           native: 'metamask://',
           universal: 'https://metamask.app.link',
