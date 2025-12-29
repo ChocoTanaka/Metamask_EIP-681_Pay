@@ -35,10 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   qr_flutter: ^4.1.0
-  reown_appkit: ^1.7.7-beta02
+  reown_appkit: ^1.7.7
   url_launcher: ^6.3.2
   flutter_launcher_icons: ^0.14.4
-  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -61,8 +60,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets:
-    - .env
 flutter_icons:
   ios: true
   image_path: "assets/images/Metamask.png"

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import "package:reown_appkit/reown_appkit.dart";
+import 'Reown.dart';
 
 void main() async{
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   // 横向きに変更
   SystemChrome.setPreferredOrientations([
@@ -51,61 +50,30 @@ class _MPSsState extends State<MPSs_Stateful> {
   bool isShow = false;
   final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
 
-  late ReownAppKitModal _appKitModal;
+  Appkit appkit = Appkit();
 
-  Future AppkitInit() async{
-    _appKitModal = ReownAppKitModal(
-      context: context, // required BuildContext
-      projectId: dotenv.env['Project_Id'],
-      metadata: const PairingMetadata(
-        name: "JPYC Invoice App",
-        description: "Generate EIP-681",
-        url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-        icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/cable_50dp.png"],
-        redirect: Redirect(
-          native: 'metamask://',
-          universal: 'https://metamask.app.link',
-          linkMode: true|false,
-        ),
-      ),
-      optionalNamespaces: {
-        'eip155': RequiredNamespace(
-          chains: ['eip155:137'], // Polygon mainnet
-          methods: [
-            'eth_sendTransaction',
-            'eth_sign',
-            'personal_sign',
-          ],
-          events: [
-            'accountsChanged',
-            'chainChanged',
-          ],
-        ),
-      },
-    );
-    await _appKitModal.init();
-  }
-
-  Future disp() async{
-    await _appKitModal.disconnect();
-  }
 
   @override
   void initState(){
     super.initState();
+    appkit.appKitInit(context);
+    appkit.appKitModal?.onModalConnect.subscribe((_) {
+      final session = appkit.appKitModal?.session;
+      if (session == null) {
+        print('session is null');
+        return;
+      } else {
+        final accounts =
+            session.namespaces!['eip155']?.accounts ?? [];
+
+        if (accounts.isEmpty) return;
+
+        final address = accounts.first.split(':')[2];
+        userAddress = address;
+      }
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    AppkitInit();
-  }
-
-  @override
-  void dispose() {
-    userAddress = "";
-    //disp();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,28 +170,11 @@ class _MPSsState extends State<MPSs_Stateful> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-
-          _appKitModal.onModalConnect.subscribe((_) {
-            final session = _appKitModal.session;
-
-            if (session == null) {
-              print('session is null');
-              return;
-            } else {
-              final accounts =
-                  session.namespaces!['eip155']?.accounts ?? [];
-
-              if (accounts.isEmpty) return;
-
-              final address = accounts.first.split(':')[2];
-
-              setState(() {
-                userAddress = address;
-                isConnected = true;
-              });
-            }
+          setState(() {
+            print("session");
+            print(appkit.appKitModal?.session);
+            appkit.Openview();
           });
-          _appKitModal.openModalView();
         },
         child: const Icon(Icons.cable),
         backgroundColor: userAddress != "" ? Colors.blue : Colors.grey[200],
