@@ -45,7 +45,6 @@ class _MPSsState extends State<MPSs_Stateful> {
   String? generatedUri;
   bool isConnected = false;
   bool isConnecting = false;
-  String? userAddress="";
   int amount = 0;
   bool isShow = false;
   final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
@@ -56,24 +55,16 @@ class _MPSsState extends State<MPSs_Stateful> {
   @override
   void initState(){
     super.initState();
-    appkit.appKitInit(context);
-    appkit.appKitModal?.onModalConnect.subscribe((_) {
-      final session = appkit.appKitModal?.session;
-      if (session == null) {
-        print('session is null');
-        return;
-      } else {
-        final accounts =
-            session.namespaces!['eip155']?.accounts ?? [];
-
-        if (accounts.isEmpty) return;
-
-        final address = accounts.first.split(':')[2];
-        userAddress = address;
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appkit.appKitInit(context);
     });
   }
 
+  @override
+  void dispose() {
+    appkit.Disconnect();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,17 +159,20 @@ class _MPSsState extends State<MPSs_Stateful> {
             ],
           )
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            print("session");
-            print(appkit.appKitModal?.session);
-            appkit.Openview();
-          });
-        },
-        child: const Icon(Icons.cable),
-        backgroundColor: userAddress != "" ? Colors.blue : Colors.grey[200],
-      ),
+      floatingActionButton: ValueListenableBuilder(
+          valueListenable: appkit.addressNotifier,
+          builder: (context, address, _){
+            return FloatingActionButton(
+              onPressed: () {
+                print("session");
+                print(appkit.appKitModal?.session);
+                appkit.Openview();
+              },
+              child: const Icon(Icons.cable),
+              backgroundColor: address!= null ? Colors.blue : Colors.grey[200],
+            );
+          }
+      )
     );
   }
 }
