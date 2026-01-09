@@ -9,6 +9,10 @@ This app is a payment support app using MetaMask.
 
 Import accounts from MetaMask and create invoices compliant with EIP-681.
 
+The developer does not obtain any personal information through this app.
+
+
+
 ## Caution
 
 **This is a Polygon Mainnet App**
