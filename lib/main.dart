@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import "package:reown_appkit/reown_appkit.dart";
+import 'Page2.dart';
+import 'Page1.dart';
 import 'Reown.dart';
 
 void main() async{
@@ -20,7 +20,7 @@ class MPSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MetaMask Payment Sub-system',
+      title: 'MetaMask JPYC Payment Sub-system',
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -30,6 +30,7 @@ class MPSs extends StatelessWidget {
   }
 }
 
+
 class MPSs_Stateful extends StatefulWidget {
   const MPSs_Stateful({super.key, required this.title});
 
@@ -37,142 +38,63 @@ class MPSs_Stateful extends StatefulWidget {
   final String title;
 
   @override
-  State<MPSs_Stateful> createState() => _MPSsState();
+  State<MPSs_Stateful> createState() => MPSs_Home();
 }
 
-class _MPSsState extends State<MPSs_Stateful> {
-  final TextEditingController amountController = TextEditingController();
-  String? generatedUri;
-  bool isConnected = false;
-  bool isConnecting = false;
-  int amount = 0;
-  bool isShow = false;
-  final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
+class MPSs_Home extends State<MPSs_Stateful>{
+  static const _screens = [
+    Page1(title: 'ReadQR'),
+    Page2(title: 'WriteQR'),
+  ];
 
-  Appkit appkit = Appkit();
+  int _selectedIndex = 0;
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
-  void initState(){
+  initState() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       appkit.appKitInit(context);
     });
   }
 
-  @override
-  void dispose() {
-    appkit.Disconnect();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
+      body:_screens[_selectedIndex],
 
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.attach_money_outlined),label: 'Read'),
+          BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Write'),
+        ],
+        type: BottomNavigationBarType.fixed,
       ),
-      body: Center(
-          child:Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: amountController,
-                      onChanged: (text)=> setState(() {
-                        amount =int.parse(amountController.text);
-                      }),
-                      decoration: const InputDecoration(
-                        labelText: 'Amount (JPYC)',
-                        border: UnderlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "JPYC",
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 2), // 黒い枠線
-                ),
-                child: isShow == false
-                    ? SizedBox(
-                  width: 250,
-                  height: 250,
-                )
-                    : QrImageView(
-                  data: generatedUri!,
-                  size: 240,
-                ),
-              ),
-              const SizedBox(height: 30),
-              Container(
-                width: 300,
-                height:75,
-                child: ElevatedButton(
-                    onPressed:() {
-                      if(userAddress != "" && amount !=0){
-                        setState(() {
-                          final BigInt amountWei = BigInt.from(amount * 1e18);
-                          final uri =
-                              'ethereum:$JPYCAddress@137/transfer?address=$userAddress&uint256=$amountWei';
-                          print(uri);
-                          generatedUri = uri;
-
-                          isShow = !isShow;
-                        });
-                      }else{
-                        null;
-                      }
-                    },
-                    child: Text(
-                      isShow ? "RESET" : "SET",
-                      style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.black
-                      ),
-                    )
-                ),
-              )
-            ],
-          )
-      ),
-      floatingActionButton: ValueListenableBuilder(
-          valueListenable: appkit.addressNotifier,
-          builder: (context, address, _){
-            return FloatingActionButton(
-              onPressed: () {
-                print("session");
-                print(appkit.appKitModal?.session);
-                appkit.Openview();
-              },
-              child: const Icon(Icons.cable),
-              backgroundColor: address!= null ? Colors.blue : Colors.grey[200],
-            );
-          }
-      )
+        floatingActionButton: ValueListenableBuilder(
+            valueListenable: appkit.addressNotifier,
+            builder: (context, address, _){
+              return FloatingActionButton(
+                onPressed: () {
+                  print("session");
+                  print(appkit.appKitModal?.session);
+                  appkit.Openview();
+                },
+                child: const Icon(Icons.cable),
+                backgroundColor: address!= null ? Colors.blue : Colors.grey[200],
+              );
+            }
+        )
     );
   }
 }
+
+

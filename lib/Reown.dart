@@ -1,7 +1,19 @@
 import "package:flutter/material.dart";
 import "package:reown_appkit/reown_appkit.dart";
 
-String? userAddress="";
+String userAddress="";
+
+Appkit appkit = Appkit();
+
+
+String maskMiddle(String text, {int head = 6, int tail = 6}) {
+  if (text.length <= head + tail) {
+    return text; // 短すぎる場合はそのまま
+  }
+  return text.substring(0, head) +
+      '...' +
+      text.substring(text.length - tail);
+}
 
 class Appkit{
 

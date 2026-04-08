@@ -529,7 +529,7 @@ packages:
     source: hosted
     version: "2.1.0"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: f69da0d3189a4b4ceaeb1a3defb0f329b3b352517f52bed4290f83d4f06bc08d
@@ -664,6 +664,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  qr_code_scanner_plus:
+    dependency: "direct main"
+    description:
+      name: qr_code_scanner_plus
+      sha256: dae0596b2763c2fd0294f5cfddb1d3a21577ae4dc7fc1449eb5aafc957872f61
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.1"
   qr_flutter:
     dependency: "direct main"
     description:
@@ -684,10 +692,10 @@ packages:
     dependency: "direct main"
     description:
       name: reown_appkit
-      sha256: "2ffc25aa74b723c8483688c8a4432b37d4180a282a9f92089f6efcf56f69f835"
+      sha256: "4bffd64bfc6610ee2bc7f26dac8d59464824a8fcea99c9a263dc4a94bab633bb"
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.7"
+    version: "1.8.3"
   reown_core:
     dependency: transitive
     description:
@@ -1030,13 +1038,13 @@ packages:
     source: hosted
     version: "1.1.1"
   web3dart:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: web3dart
-      sha256: bde2c92aac6f086988b6a1935c9d884f42a6acb772c93e1e2810f64af0db5600
+      sha256: b7401f8c57833fbde08aaaa8c56e020c5cbdef6bab7f946f69bcc342c9c492b2
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   web_socket:
     dependency: transitive
     description:
