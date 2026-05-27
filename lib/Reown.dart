@@ -40,7 +40,7 @@ class Appkit{
           name: "JPYC Invoice App",
           description: "Generate ERC-681",
           url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/JPYC_16.png"],
+          icons: ["https://github.com/ChocoTanaka/Metamask_EIP-681_Pay/blob/master/JPYC_16.png"],
           redirect: Redirect(
             native: 'jpycinvoice://',
             universal: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
