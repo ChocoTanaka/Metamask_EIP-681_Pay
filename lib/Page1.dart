@@ -7,9 +7,9 @@ import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'Web3.dart';
 
 class Page1 extends StatefulWidget {
-  const Page1({super.key, required this.title});
+  const Page1({super.key, required this.title, required this.address});
 
-
+  final String address;
   final String title;
 
   @override
@@ -48,8 +48,8 @@ class _MPSsState_Read extends State<Page1> {
         result = scanData;
         print(result!.code);
         setState(() async{
-          if(validateRawUri(result!.code!) != null){
-            Text_Error = errorMessage(validateRawUri(result!.code!)!);
+          if(validateRawUri(result!.code!, chain_now) != null){
+            Text_Error = errorMessage(validateRawUri(result!.code!, chain_now)!);
             URI = "";
             await Future.delayed(const Duration(milliseconds: 1500));
             setState(() {
@@ -76,7 +76,7 @@ class _MPSsState_Read extends State<Page1> {
         title: const Text('Tx Check'),
         content: SizedBox(
           width: double.maxFinite,
-          height: 100,
+          height: 200,
           child: Container(
             width: 300,
             decoration: BoxDecoration(
@@ -86,17 +86,35 @@ class _MPSsState_Read extends State<Page1> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                SizedBox(
+                  height: 10,
+                ),
                 Text(
-                  "Address: ${maskMiddle(tx_R.to)}",
+                  "Address:  ${maskMiddle(tx_R.to)}",
                   style: TextStyle(
                     fontSize: 20.0,
                   ),
                   overflow: TextOverflow.ellipsis, // 長いテキストを省略
                 ),
-                Text(
-                    "${ShowAmount(tx_R.amount)} JPYC",
+                tx_R.tag !="" ?
+                  Text(
+                    "tag:  ${filltag(tx_R.tag)}",
                     style: TextStyle(
+                      fontSize: 16.0,
+                    ),
+                  )
+                : SizedBox(),
+                Text(
+                    "${ShowAmount(tx_R.amount, coin_now.Div)}  ${coin_now.Name}",
+                    style: TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+                Text(
+                  "Network:  ${chain_now.Name}",
+                  style: TextStyle(
                     fontSize: 20.0,
                   ),
                 ),
@@ -119,6 +137,7 @@ class _MPSsState_Read extends State<Page1> {
               Navigator.pop(context);
             },
           ),
+          SizedBox(width: 30),
           GestureDetector(
             child: const Text(
               'OK',
@@ -128,10 +147,11 @@ class _MPSsState_Read extends State<Page1> {
             ),
             onTap: () async {
               final tx = buildTransaction(
-                from: userAddress,
+                from: appkit.userAddress,
                 tokenAddress: tx_R.token,
                 to: tx_R.to,
                 amount: tx_R.amount,
+                tag: tx_R.tag
               );
               final response = await appkit.appKitModal?.request(
                 topic: appkit.appKitModal?.session!.topic,
@@ -182,7 +202,7 @@ class _MPSsState_Read extends State<Page1> {
               URI.isNotEmpty ?
               ElevatedButton(
                   onPressed: () async {
-                    if(URI.isNotEmpty && userAddress !=""){
+                    if(URI.isNotEmpty && appkit.userAddress !=""){
                       setState(() {
                         Text_Error = "";
                         Read_Text = "Check Phase...";
@@ -205,7 +225,7 @@ class _MPSsState_Read extends State<Page1> {
                     ),
                   ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: (URI.isNotEmpty && userAddress !="") ? Colors.deepPurple[200] : Colors.grey
+                  backgroundColor: (URI.isNotEmpty && appkit.userAddress !="") ? Colors.deepPurple[200] : Colors.grey
                 )
               )
                   :
@@ -225,11 +245,11 @@ class _MPSsState_Read extends State<Page1> {
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: userAddress !="" ? Colors.deepPurple[200] : Colors.grey
+                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
                   onPressed: () {
                     setState(() {
-                      if(userAddress !=""){
+                      if(appkit.userAddress !=""){
                         i_situ = 1;
                       }
                     });
@@ -272,11 +292,11 @@ class _MPSsState_Read extends State<Page1> {
             child: Center(
               child:ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: userAddress !="" ? Colors.deepPurple[200] : Colors.grey
+                  backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                 ),
                 onPressed: () {
                   setState(() {
-                    if(userAddress !=""){
+                    if(appkit.userAddress !=""){
                       i_situ = 1;
                     }
                   });

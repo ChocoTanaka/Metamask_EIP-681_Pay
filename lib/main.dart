@@ -42,10 +42,6 @@ class MPSs_Stateful extends StatefulWidget {
 }
 
 class MPSs_Home extends State<MPSs_Stateful>{
-  static const _screens = [
-    Page1(title: 'ReadQR'),
-    Page2(title: 'WriteQR'),
-  ];
 
   int _selectedIndex = 0;
 
@@ -62,9 +58,31 @@ class MPSs_Home extends State<MPSs_Stateful>{
     WidgetsBinding.instance.addPostFrameCallback((_) {
       appkit.appKitInit(context);
     });
+    appkit.addressNotifier.addListener(_handleAppKitUpdate);
+  }
+
+  // 通知が来たら呼ばれる関数
+  void _handleAppKitUpdate() {
+    if (mounted) {
+      setState(() {
+        // これにより build メソッドが再実行され、
+        // _screens 内のウィジェットが新しいアドレスで作成されます。
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    appkit.Disconnect();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
+
+    final _screens = [
+      Page1(title: 'ReadQR',address: appkit.userAddress),
+      Page2(title: 'WriteQR',address: appkit.userAddress),
+    ];
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -75,7 +93,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.attach_money_outlined),label: 'Read'),
-          BottomNavigationBarItem(icon: Icon(Icons.camera), label: 'Write'),
+          BottomNavigationBarItem(icon: Icon(Icons.qr_code_2), label: 'Write'),
         ],
         type: BottomNavigationBarType.fixed,
       ),

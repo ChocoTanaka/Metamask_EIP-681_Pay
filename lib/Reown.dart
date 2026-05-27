@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:reown_appkit/reown_appkit.dart";
 
-String userAddress="";
+
 
 Appkit appkit = Appkit();
 
@@ -17,6 +17,8 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
 
 class Appkit{
 
+  String userAddress="";
+
   final ValueNotifier<String?> addressNotifier =
   ValueNotifier(null);
 
@@ -25,6 +27,8 @@ class Appkit{
 
   Set<String> supportedWalletIds = <String>{
     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
+    '38633830ef578a1249c345848a8d6487551a346b923d21ce197ea57f423f3113', //hashport
+
   };
 
   Future appKitInit(BuildContext context) async {
@@ -34,11 +38,12 @@ class Appkit{
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: const PairingMetadata(
           name: "JPYC Invoice App",
-          description: "Generate EIP-681",
+          description: "Generate ERC-681",
           url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/cable_50dp.png"],
+          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/JPYC_16.png"],
           redirect: Redirect(
             native: 'jpycinvoice://',
+            universal: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
           ),
         ),
     );
@@ -46,8 +51,8 @@ class Appkit{
     appKitModal = ReownAppKitModal(
         context: context,
         appKit: appKit,
-        includedWalletIds: supportedWalletIds,
         featuredWalletIds: supportedWalletIds,
+        includedWalletIds: supportedWalletIds,
     );
 
     print("Connecting to Relay...");
@@ -89,7 +94,6 @@ class Appkit{
     }
     print("WC URI: ${appKitModal?.wcUri}");
     await appKitModal?.openModalView();
-
   }
 
   void Disconnect() async{
