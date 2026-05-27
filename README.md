@@ -1,13 +1,9 @@
-# eip681_pay
-
-ReWrite Because of leak
-
-
+# MetaMask JPYC Sub-Payment System
 ## About
 
 This app is a payment support app using MetaMask.
 
-Import accounts from MetaMask and create invoices compliant with EIP-681.
+Import accounts from MetaMask and create invoices compliant with ERC-681.
 
 The developer does not obtain any personal information through this app.
 
@@ -15,7 +11,9 @@ The developer does not obtain any personal information through this app.
 
 ## Caution
 
-**This is a Polygon Mainnet App**
+**update : We can use also Ethereum** 
 
+For now, I support
 
-For now, I only plan to support Polygon JPYC.
+- Polygon Ethereum JPYC
+- Polygon Ethereum USDC
