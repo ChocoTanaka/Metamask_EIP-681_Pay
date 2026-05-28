@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:reown_appkit/appkit_modal.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'Reown.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'Web3.dart';
 
 class Page1 extends StatefulWidget {
@@ -23,51 +23,19 @@ class _MPSsState_Read extends State<Page1> {
   String URI = "";
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
-  QRViewController? controller;
+  final _controller = MobileScannerController(
+      facing: CameraFacing.back,
+      detectionSpeed: DetectionSpeed.normal, // 連続検知を防ぐために速度を調整
+      autoStart: true
+  );
 
 
 
   @override
-  void reassemble() {
-    super.reassemble();
-    if (Platform.isAndroid) {
-      controller!.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller!.resumeCamera();
-    }
-  }
-
-  void _onQRViewCreated(QRViewController controller){
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async{
-      if(i_situ==1){
-        setState(() {
-          i_situ=2;
-          Read_Text = "Now reading Tx...";
-        });
-        result = scanData;
-        print(result!.code);
-        setState(() async{
-          if(validateRawUri(result!.code!, chain_now) != null){
-            Text_Error = errorMessage(validateRawUri(result!.code!, chain_now)!);
-            URI = "";
-            await Future.delayed(const Duration(milliseconds: 1500));
-            setState(() {
-              Text_Error = "";
-              i_situ=1;
-            });
-          }else{
-            Text_Error = "";
-            await Future.delayed(const Duration(milliseconds: 1500));
-            setState(() {
-              URI = result!.code!;
-              Read_Text = "Checking Phase";
-            });
-          }
-        });
-
-      }
-    });
+  void dispose() {
+    // 画面を離れる時に必ずリソースを解放する
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> CheckTx(BuildContext context, Erc681Request tx_R) async {
@@ -247,12 +215,12 @@ class _MPSsState_Read extends State<Page1> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
-                  onPressed: () {
-                    setState(() {
-                      if(appkit.userAddress !=""){
+                  onPressed: () async{
+                    if(appkit.userAddress !="") {
+                      setState(() {
                         i_situ = 1;
-                      }
-                    });
+                      });
+                    }
                   },
                   child: Text(
                     "Read_Start",
@@ -267,47 +235,104 @@ class _MPSsState_Read extends State<Page1> {
         return SizedBox(
           height:300,
           width:300,
-          child: QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
+          child: MobileScanner(
+            controller: _controller, // ここで指定
+            onDetect: (capture) async {
+              final List<Barcode> barcodes = capture.barcodes;
+              if (barcodes.isEmpty) return;
+
+              // 最初のバーコードを取得
+              final String? code = barcodes.first.rawValue;
+              if (code == null) return;
+
+              // i_situ が 1（待機中）の時だけ処理を行う
+              if (i_situ == 1) {
+                // 1. まずカメラを止める（Webでの安定動作に重要）
+                await _controller.stop();
+                // 1. 読み取り開始状態へ
+                setState(() {
+                  i_situ = 2;
+                  Read_Text = "Now reading Tx...";
+                });
+
+                print("Scanned Code: $code");
+
+                // 2. バリデーションチェック
+                final error = validateRawUri(code);
+
+                if (error != null) {
+                  // --- エラーの場合 ---
+                  setState(() {
+                    Text_Error = errorMessage(error);
+                    URI = "";
+                  });
+
+                  await Future.delayed(const Duration(milliseconds: 1500));
+
+                  if (mounted) {
+                    // カメラを再開
+                    await _controller.start();
+                    setState(() {
+                      Text_Error = "";
+                      i_situ = 1; // 読み取り待機に戻す
+                    });
+                  }
+                } else {
+                  // --- 成功の場合 ---
+                  setState(() {
+                    Text_Error = "";
+                  });
+
+                  await Future.delayed(const Duration(milliseconds: 1500));
+
+                  if (mounted) {
+                    setState(() {
+                      URI = code;
+                      Read_Text = "Checking Phase";
+                      // 必要に応じてここで i_situ を次のステップへ進める
+                    });
+                  }
+                }
+              }
+            },
           ),
         );
-        case 2:
-      return SizedBox(
-          height:300,
-          width:300,
-          child: Center(
-            child:Text(
-              Read_Text,
-              style: TextStyle(
-                fontSize: 26.0,
+      case 2:
+        return SizedBox(
+            height:300,
+            width:300,
+            child: Center(
+              child:Text(
+                Read_Text,
+                style: TextStyle(
+                  fontSize: 26.0,
+                ),
               ),
-            ),
-          )
-      );
+            )
+        );
       default:
         return SizedBox(
             height:300,
             width:300,
             child: Center(
-              child:ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
-                ),
-                onPressed: () {
-                  setState(() {
-                    if(appkit.userAddress !=""){
-                      i_situ = 1;
-                    }
-                  });
-                },
-                child: Text(
-                  "Read_Start",
-                  style: TextStyle(
-                    fontSize: 26.0,
+                child:ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
                   ),
-                ),
-              )
+                  onPressed: () {
+                    setState(() {
+                      if(appkit.userAddress !=""){
+                        i_situ = 1;
+                      }
+                    });
+                  },
+                  child: Text(
+                    "Read_Start",
+                    style: TextStyle(
+                      fontSize: 36.0,
+                    ),
+                  ),
+                )
             )
         );
     }

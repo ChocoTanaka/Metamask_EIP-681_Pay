@@ -15,6 +15,20 @@ String maskMiddle(String text, {int head = 6, int tail = 6}) {
       text.substring(text.length - tail);
 }
 
+Map<String, RequiredNamespace> r_Ns = {
+  'eip155': RequiredNamespace(
+    chains: ['eip155:1', 'eip155:137'], // eth,pol
+    methods: [
+      "eth_sendTransaction",
+      "eth_signTransaction",
+      "personal_sign"
+    ],
+    events: [
+      'accountsChanged',
+    ],
+  ),
+};
+
 class Appkit{
 
   String userAddress="";
@@ -27,8 +41,9 @@ class Appkit{
 
   Set<String> supportedWalletIds = <String>{
     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
+    '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
     '38633830ef578a1249c345848a8d6487551a346b923d21ce197ea57f423f3113', //hashport
-
+    'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a' //uniswap wallet
   };
 
   Future appKitInit(BuildContext context) async {
@@ -37,7 +52,7 @@ class Appkit{
         projectId: const String.fromEnvironment("ProjectId"),
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: const PairingMetadata(
-          name: "JPYC Invoice App",
+          name: "Metamask JPYC Sub-Payment System",
           description: "Generate ERC-681",
           url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
           icons: ["https://github.com/ChocoTanaka/Metamask_EIP-681_Pay/blob/master/JPYC_16.png"],
@@ -51,9 +66,12 @@ class Appkit{
     appKitModal = ReownAppKitModal(
         context: context,
         appKit: appKit,
+        optionalNamespaces: r_Ns,
         featuredWalletIds: supportedWalletIds,
         includedWalletIds: supportedWalletIds,
     );
+
+
 
     print("Connecting to Relay...");
 // initを呼ぶ前にCoreの状態を確認

@@ -25,7 +25,7 @@ class _MPSsState_Write extends State<Page2> {
 
   late String tag1_s = "",tag2_s = "",tag3_s = "",tag4_s ="";
   String? generatedUri;
-  int amount = 0;
+  String amount = "";
   bool isShow = false;
   bool isTag = false;
 
@@ -219,16 +219,20 @@ class _MPSsState_Write extends State<Page2> {
                       child: TextFormField(
                         controller: amountController,
                         onChanged: (text)=> setState(() {
-                          amount =int.parse(amountController.text);
+                          amount =amountController.text;
                         }),
                         decoration: InputDecoration(
                           labelText: 'Amount (${coin_now.Name})',
                           border: const UnderlineInputBorder(),
                         ),
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         style: TextStyle(
                           fontSize: 22,
                         ),
+                        inputFormatters: [
+                          // 修正版：小数点以下が0桁（ドットだけ）の状態も許容する
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,6}')),
+                        ]
                       ),
                     ),
                     const SizedBox(height: 30),
@@ -279,7 +283,7 @@ class _MPSsState_Write extends State<Page2> {
                       onPressed:() {
                         if(appkit.userAddress != "" && amount !=0){
                           setState(() {
-                            final BigInt amountWei = BigInt.from(amount) * BigInt.from(10).pow(coin_now.Div);
+                            final BigInt amountWei = parseInputToBigInt(amount,coin_now.Div);
                             final tag = tag1_s+tag2_s+tag3_s+tag4_s;
                             final uri =
                                 URI(amountWei,tag);

@@ -86,14 +86,33 @@ String Checkname(String address){
   return 'Undefined Stable Coin';
 }
 
-final String JPYCAddress = "0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29";
+BigInt parseInputToBigInt(String input, int decimals) {
+  if (!input.contains('.')) {
+    // 小数点がない場合（例: "3"）はそのまま後ろにゼロを付けるだけ
+    return BigInt.parse(input) * BigInt.from(10).pow(decimals);
+  }
+
+  // 小数点で分割（例: "3.3" -> ["3", "3"]）
+  List<String> parts = input.split('.');
+  String integerPart = parts[0]; // "3"
+  String decimalPart = parts[1]; // "3"
+
+  // 小数点以下の桁数が指定（6桁）より長ければ切り捨て、短ければゼロで埋める
+  if (decimalPart.length > decimals) {
+    decimalPart = decimalPart.substring(0, decimals);
+  } else {
+    decimalPart = decimalPart.padRight(decimals, '0'); // "3" -> "300000"
+  }
+
+  // 結合して一つの巨大な整数文字列にする（"3" + "300000" = "3300000"）
+  return BigInt.parse(integerPart + decimalPart);
+}
 
 enum UriCheckError {
   notEVMUri,
   differentNetwork,
   invalidToken,
   invalidFormat,
-  invalidDecimal,
   invalidFunction,
 }
 
@@ -107,14 +126,12 @@ String errorMessage(UriCheckError e) {
       return 'Invalid token';
     case UriCheckError.invalidFormat:
       return 'Invalid URI';
-    case UriCheckError.invalidDecimal:
-      return 'Invalid Digits';
     case UriCheckError.invalidFunction:
       return 'Unsupported Function';
   }
 }
 
-UriCheckError? validateRawUri(String uri, Blockchain chain) {
+UriCheckError? validateRawUri(String uri) {
 
   try {
     final req = parseErc681(uri);
@@ -129,10 +146,6 @@ UriCheckError? validateRawUri(String uri, Blockchain chain) {
     String checkAddress = Checkname(req.token);
     if(checkAddress == 'Undefined Stable Coin'){
       return UriCheckError.invalidToken;
-    }
-
-    if (isValidDecimals(req.amount, 6) ==false && isValidDecimals(req.amount, 18) == false) {
-      return UriCheckError.invalidDecimal;
     }
 
     if (req.function != "transfer") {
