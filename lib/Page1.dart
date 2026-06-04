@@ -121,9 +121,10 @@ class _MPSsState_Read extends State<Page1> {
                 amount: tx_R.amount,
                 tag: tx_R.tag
               );
+
               final response = await appkit.appKitModal?.request(
                 topic: appkit.appKitModal?.session!.topic,
-                chainId: 'eip155:137',
+                chainId: 'eip155:${chain_now.ChainId}',
                 request: SessionRequestParams(
                     method: "eth_sendTransaction",
                     params: [tx]
@@ -149,10 +150,24 @@ class _MPSsState_Read extends State<Page1> {
 
         title: Text(widget.title),
       ),
-      body: Center(
-          child: Column(
+      body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
+              Row(
+                children: [
+                  Text(
+                    "Address:",
+                    style: const TextStyle(fontSize: 22),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    appkit.userAddress.isNotEmpty ? maskMiddle(appkit.userAddress, head: 6, tail: 6) : "Not Connected",
+                    style: const TextStyle(fontSize: 22),
+                    overflow: TextOverflow.ellipsis,
+                  )
+                ],
+              ),
+              const SizedBox(height: 10),
               Text(
                 "Read ERC-681 Recipt",
                 style: TextStyle(
@@ -200,8 +215,7 @@ class _MPSsState_Read extends State<Page1> {
               const Padding(padding: EdgeInsets.all(10)),
             ],
           )
-      ),
-    );
+      );
   }
 
   SizedBox Camera_Viewer(){

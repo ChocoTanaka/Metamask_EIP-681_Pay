@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:ui';
-
-import 'package:web3dart/web3dart.dart';
 
 Blockchain chain_now = Blockchain.pol;
 
@@ -237,7 +234,7 @@ Erc681Request parseErc681(String uri) {
   final path = parts[0];
   final query = Uri.splitQueryString(parts[1]);
 
-  // 0x...@137/transfer
+  // 0x...@chainId/transfer
   final pathParts = path.split('/');
   final addressAndChain = pathParts[0];
   final function = pathParts[1];
@@ -253,6 +250,8 @@ Erc681Request parseErc681(String uri) {
   if(chainId == Blockchain.pol.ChainId){
     chain_now = Blockchain.pol;
   }
+  print("now id:${chain_now.ChainId}");
+  print("now id:${chainId}");
 
   final to = query['address']!;
   final amount = parseScientific(query['uint256']!);

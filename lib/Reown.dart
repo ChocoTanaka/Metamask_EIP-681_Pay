@@ -21,7 +21,7 @@ Map<String, RequiredNamespace> r_Ns = {
     methods: [
       "eth_sendTransaction",
       "eth_signTransaction",
-      "personal_sign"
+
     ],
     events: [
       'accountsChanged',
@@ -41,9 +41,10 @@ class Appkit{
 
   Set<String> supportedWalletIds = <String>{
     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
-    '38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
+    //'38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
     '38633830ef578a1249c345848a8d6487551a346b923d21ce197ea57f423f3113', //hashport
-    'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a' //uniswap wallet
+    //'5d9f1395b3a8e848684848dc4147cbd05c8d54bb737eac78fe103901fe6b01a1' //okx
+    'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // uni
   };
 
   Future appKitInit(BuildContext context) async {
@@ -55,10 +56,10 @@ class Appkit{
           name: "Metamask JPYC Sub-Payment System",
           description: "Generate ERC-681",
           url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-          icons: ["https://github.com/ChocoTanaka/Metamask_EIP-681_Pay/blob/master/JPYC_16.png"],
+          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/icon_512.png"],
           redirect: Redirect(
-            native: 'jpycinvoice://',
-            universal: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
+              native: 'jpycinvoice://wc',
+              linkMode: true
           ),
         ),
     );
@@ -88,10 +89,20 @@ class Appkit{
     print("AppKit Initialized: $isConnected");
 
 
-    appKitModal?.appKit?.onSessionConnect.subscribe((_) {
+    appKitModal?.appKit?.onSessionConnect.subscribe((_) async{
+
       final session = appKitModal?.session;
+
+      for (int i = 0; i < 10; i++) {
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        if (session != null) {
+          break;
+        }
+      }
+
       if (session == null) {
-        print('session is null');
+        print('session timeout');
         return;
       } else {
         final accounts =
@@ -102,6 +113,7 @@ class Appkit{
         final address = accounts.first.split(':')[2];
         userAddress = address;
         addressNotifier.value = address;
+        print(session);
       }
     });
   }

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Page2.dart';
@@ -11,6 +13,17 @@ void main() async{
     DeviceOrientation.portraitUp
   ]);
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    print("error:${error}");
+    print(stack);
+    return true;
+  };
+
   runApp(const MPSs());
 }
 
