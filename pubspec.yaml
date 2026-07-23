@@ -41,6 +41,7 @@ dependencies:
   package_info_plus:
   web3dart:
   mobile_scanner:
+  flutter_local_notifications:
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +66,6 @@ flutter:
   uses-material-design: true
 flutter_icons:
   ios: true
-  image_path: "assets/images/Metamask.png"
+  image_path: "assets/images/STABLEpay_512.png"
   remove_alpha_ios: true
   android: true

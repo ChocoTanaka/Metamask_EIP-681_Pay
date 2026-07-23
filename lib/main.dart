@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Page2.dart';
@@ -33,12 +34,12 @@ class MPSs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MetaMask JPYC Payment Sub-system',
+      title: 'STABLECOIN Sub-Payment System',
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MPSs_Stateful(title: 'MetaMask Payment Sub-system'),
+      home: const MPSs_Stateful(title: 'STABLECOIN Sub-Payment System'),
     );
   }
 }
@@ -70,6 +71,7 @@ class MPSs_Home extends State<MPSs_Stateful>{
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       appkit.appKitInit(context);
+      LocalNotificationService.instance.initialize();
     });
     appkit.addressNotifier.addListener(_handleAppKitUpdate);
   }
@@ -93,8 +95,8 @@ class MPSs_Home extends State<MPSs_Stateful>{
   Widget build(BuildContext context) {
 
     final _screens = [
-      Page1(title: 'ReadQR',address: appkit.userAddress),
-      Page2(title: 'WriteQR',address: appkit.userAddress),
+      Page1(title: 'SC SubPayment ReadQR',address: appkit.userAddress),
+      Page2(title: 'SC SubPayment WriteQR',address: appkit.userAddress),
     ];
 
     return Scaffold(

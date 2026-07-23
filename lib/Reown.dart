@@ -41,10 +41,10 @@ class Appkit{
 
   Set<String> supportedWalletIds = <String>{
     'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask ID
-    //'38f5d18bd8522c244bdd70cb4a68e0e718865155811c043f052fb9f1c51de662', //bitget
+    //'e3d6117850435b1359b81d7cef869f6851c00ad2125cadb04f4e003be8074af6', //myna
     '38633830ef578a1249c345848a8d6487551a346b923d21ce197ea57f423f3113', //hashport
-    //'5d9f1395b3a8e848684848dc4147cbd05c8d54bb737eac78fe103901fe6b01a1' //okx
     'c03dfee351b6fcc421b4494ea33b9d4b92a984f87aa76d1663bb28705e95034a', // uni
+    '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1' // Rabby
   };
 
   Future appKitInit(BuildContext context) async {
@@ -53,12 +53,12 @@ class Appkit{
         projectId: const String.fromEnvironment("ProjectId"),
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: const PairingMetadata(
-          name: "Metamask JPYC Sub-Payment System",
+          name: "STABLECOIN Sub-Payment System",
           description: "Generate ERC-681",
           url: "https://github.com/ChocoTanaka/Metamask_EIP-681_Pay",
-          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/icon_512.png"],
+          icons: ["https://raw.githubusercontent.com/ChocoTanaka/Metamask_EIP-681_Pay/master/icon_stablepay_512.png"],
           redirect: Redirect(
-              native: 'jpycinvoice://wc',
+              native: 'stinvoice://wc',
               linkMode: true
           ),
         ),

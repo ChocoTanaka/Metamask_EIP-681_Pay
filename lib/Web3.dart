@@ -4,6 +4,8 @@ Blockchain chain_now = Blockchain.pol;
 
 Stablecoin coin_now = coin_pol.JPYC;
 
+Stablecoin coin_noti = coin_pol.JPYC;
+
 enum Blockchain{
   eth(
     "Ethereum",
@@ -12,23 +14,31 @@ enum Blockchain{
       coin_eth.JPYC,
       coin_eth.USDC
     ],
-    coin_eth.JPYC
+    coin_eth.JPYC,
+    "https://eth.drpc.org",
+    "wss://eth.drpc.org",
   ),
   pol(
       "Polygon",
       137,
       [
         coin_pol.JPYC,
-        coin_pol.USDC
+        coin_pol.USDC,
+        coin_pol.xSGD,
+        coin_pol.IDRX
       ],
-    coin_pol.JPYC
+    coin_pol.JPYC,
+    "https://polygon.drpc.org",
+    "wss://polygon.drpc.org",
   );
 
   final String Name;
   final int ChainId;
   final List<Stablecoin> Coins;
   final Stablecoin first;
-  const Blockchain(this.Name, this.ChainId, this.Coins, this.first);
+  final String rpc;
+  final String ws;
+  const Blockchain(this.Name, this.ChainId, this.Coins, this.first, this.rpc, this.ws);
 
 }
 
@@ -54,7 +64,9 @@ enum coin_eth implements Stablecoin{
 
 enum coin_pol implements Stablecoin{
   JPYC("JPYC", '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29', 18),
-  USDC("USDC", '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6);
+  USDC("USDC", '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6),
+  xSGD("XSGD", '0xDC3326e71D45186F113a2F448984CA0e8D201995', 6),
+  IDRX("XIDR", '0x2c826035c1C36986117A0e949bD6ad4baB54afE2', 6);
 
   final String Name;
   final String Address;
@@ -64,10 +76,10 @@ enum coin_pol implements Stablecoin{
   
 }
 
-void checkAddress(String address){
+void checkAddress(String address, Stablecoin coin_check){
   for (var coin in chain_now.Coins){
     if (address ==coin.Address){
-      coin_now = coin;
+      coin_check = coin;
     }
   }
 }
@@ -242,7 +254,7 @@ Erc681Request parseErc681(String uri) {
   final addrSplit = addressAndChain.split('@');
 
   final token = addrSplit[0];
-  checkAddress(token);
+  checkAddress(token, coin_now);
   final chainId = int.parse(addrSplit[1]);
   if(chainId == Blockchain.eth.ChainId){
     chain_now = Blockchain.eth;

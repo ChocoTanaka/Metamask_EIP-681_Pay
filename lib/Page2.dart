@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'Reown.dart';
 import 'Web3.dart';
+import 'request.dart';
 
 
 class Page2 extends StatefulWidget {
@@ -42,6 +43,12 @@ class _MPSsState_Write extends State<Page2> {
   void initState(){
     super.initState();
 
+  }
+
+  @override
+  void dispose(){
+    Erc20Watcher.instance.dispose();
+    super.dispose();
   }
 
   @override
@@ -291,6 +298,11 @@ class _MPSsState_Write extends State<Page2> {
                             generatedUri = uri;
 
                             isShow = !isShow;
+                            if(isShow == true){
+                              //Erc20Watcher.instance.test(ws);
+
+                              Erc20Watcher.instance.start(chain_now.rpc, chain_now.ws, appkit.userAddress);
+                            }
                           });
                         }else{
                           null;
