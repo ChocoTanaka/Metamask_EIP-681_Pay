@@ -16,6 +16,7 @@ The developer does not obtain any personal information through this app.
 - MetaMask
 - HashPort Wallet
 - Uniswap Wallet
+- Rabby wallet
 
 - After checking, Bitget, Base, and OKX Wallet are not recommended 
 because they are behaving abnormally.
@@ -26,9 +27,11 @@ ERC-681 QR codes can be scanned using various wallets.
 
 ## Update
 
-**update : We can use also Ethereum** 
+**update : Add notification** 
 
 For now, I support
 
 - Polygon Ethereum JPYC
 - Polygon Ethereum USDC
+- Polygon XSGD
+- Polygon IDRX
