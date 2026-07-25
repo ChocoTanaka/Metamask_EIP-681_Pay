@@ -86,7 +86,9 @@ class _MPSsState_Write extends State<Page2> {
                           ), // enumに定義したラベルを表示
                         );
                       }).toList(),
-                      onChanged: (value) {
+                      onChanged: isShow
+                          ? null
+                          :  (value) {
                         setState(() {
                           coin_now = value!.first;
                           chain_now = value;
@@ -134,6 +136,7 @@ class _MPSsState_Write extends State<Page2> {
                           ),
                           Expanded(
                             child: TextFormField(
+                                enabled: !isShow,
                                 textAlign: TextAlign.center,
                                 controller: tag1,
                                 onChanged: (text)=> setState(() {
@@ -155,6 +158,7 @@ class _MPSsState_Write extends State<Page2> {
                           ),
                           Expanded(
                             child: TextFormField(
+                                enabled: !isShow,
                                 textAlign: TextAlign.center,
                                 controller: tag2,
                                 onChanged: (text)=> setState(() {
@@ -176,6 +180,7 @@ class _MPSsState_Write extends State<Page2> {
                           ),
                           Expanded(
                             child: TextFormField(
+                                enabled: !isShow,
                                 textAlign: TextAlign.center,
                                 controller: tag3,
                                 onChanged: (text)=> setState(() {
@@ -197,6 +202,7 @@ class _MPSsState_Write extends State<Page2> {
                           ),
                           Expanded(
                             child: TextFormField(
+                                enabled: !isShow,
                                 textAlign: TextAlign.center,
                                 controller: tag4,
                                 onChanged: (text)=> setState(() {
@@ -224,6 +230,7 @@ class _MPSsState_Write extends State<Page2> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                          enabled: !isShow,
                         controller: amountController,
                         onChanged: (text)=> setState(() {
                           amount =amountController.text;
@@ -256,7 +263,9 @@ class _MPSsState_Write extends State<Page2> {
                           ), // enumに定義したラベルを表示
                         );
                       }).toList(),
-                      onChanged: (value) {
+                      onChanged: isShow
+                          ? null
+                          : (value) {
                         setState(() {
                           coin_now = value!;
                           print(coin_now.Name);

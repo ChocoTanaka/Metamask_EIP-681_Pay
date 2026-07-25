@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
 import 'Web3.dart';
 import 'package:reown_appkit/reown_appkit.dart';
 import 'package:web3dart/web3dart.dart';
@@ -113,7 +115,9 @@ class Erc20Watcher{
     print("Value: $value");
     print("TxHash: $txHash");
 
-    checkAddress(contract.toString(), coin_noti);
+    print(contract.eip55With0x);
+
+    coin_noti = checkAddress((contract.eip55With0x).toString());
 
     // symbol, decimals を取得
     // 通知

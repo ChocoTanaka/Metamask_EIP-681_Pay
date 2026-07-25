@@ -66,7 +66,7 @@ enum coin_pol implements Stablecoin{
   JPYC("JPYC", '0xE7C3D8C9a439feDe00D2600032D5dB0Be71C3c29', 18),
   USDC("USDC", '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6),
   xSGD("XSGD", '0xDC3326e71D45186F113a2F448984CA0e8D201995', 6),
-  IDRX("XIDR", '0x2c826035c1C36986117A0e949bD6ad4baB54afE2', 6);
+  IDRX("IDRX", '0x649a2DA7B28E0D54c13D5eFf95d3A660652742cC', 0);
 
   final String Name;
   final String Address;
@@ -76,12 +76,16 @@ enum coin_pol implements Stablecoin{
   
 }
 
-void checkAddress(String address, Stablecoin coin_check){
+Stablecoin checkAddress(String address){
+  print(chain_now.Name);
   for (var coin in chain_now.Coins){
-    if (address ==coin.Address){
-      coin_check = coin;
+    if (coin.Address == address){
+      print(coin.Name);
+      return coin;
     }
   }
+  print("Address undefined");
+  return coin_pol.JPYC;
 }
 
 String Checkname(String address){
@@ -148,8 +152,27 @@ UriCheckError? validateRawUri(String uri) {
       return UriCheckError.notEVMUri;
     }
 
+    Blockchain chain_v = Blockchain.eth;
+
     if (req.chainId != Blockchain.eth.ChainId && req.chainId != Blockchain.pol.ChainId) {
       return UriCheckError.differentNetwork;
+    }
+    if(req.chainId == Blockchain.eth.ChainId){
+      chain_v = Blockchain.eth;
+    }
+    if(req.chainId == Blockchain.pol.ChainId){
+      chain_v = Blockchain.pol;
+    }
+
+    bool isvaliedtoken = false;
+    for(var coin in chain_v.Coins){
+      if(coin.Address == req.token){
+        isvaliedtoken = true;
+        break;
+      }
+    }
+    if(isvaliedtoken ==false){
+      return UriCheckError.invalidToken;
     }
 
     String checkAddress = Checkname(req.token);
@@ -254,7 +277,7 @@ Erc681Request parseErc681(String uri) {
   final addrSplit = addressAndChain.split('@');
 
   final token = addrSplit[0];
-  checkAddress(token, coin_now);
+
   final chainId = int.parse(addrSplit[1]);
   if(chainId == Blockchain.eth.ChainId){
     chain_now = Blockchain.eth;
@@ -264,6 +287,8 @@ Erc681Request parseErc681(String uri) {
   }
   print("now id:${chain_now.ChainId}");
   print("now id:${chainId}");
+
+  coin_now = checkAddress(token);
 
   final to = query['address']!;
   final amount = parseScientific(query['uint256']!);

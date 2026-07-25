@@ -40,6 +40,7 @@ class _MPSsState_Read extends State<Page1> {
 
   Future<void> CheckTx(BuildContext context, Erc681Request tx_R) async {
     await showDialog(context: context, builder: (BuildContext context) {
+        print("coin ${coin_now.Name}");
       return AlertDialog(
         title: const Text('Tx Check'),
         content: SizedBox(
@@ -183,34 +184,38 @@ class _MPSsState_Read extends State<Page1> {
               ),
               Camera_Viewer(),
               URI.isNotEmpty ?
-              ElevatedButton(
-                  onPressed: () async {
-                    if(URI.isNotEmpty && appkit.userAddress !=""){
-                      setState(() {
-                        Text_Error = "";
-                        Read_Text = "Check Phase...";
-                      });
-                      final Tx = parseErc681(URI);
-                      URI = "";
-                      CheckTx(context,Tx).then((result) async{
-                        await Future.delayed(const Duration(milliseconds: 1500));
-                        setState(() {
-                          i_situ = 0;
-                          Read_Text = "";
-                        });
-                      });
-                    }
-                  },
-                  child: Text(
-                    "Check",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                    ),
-                  ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: (URI.isNotEmpty && appkit.userAddress !="") ? Colors.deepPurple[200] : Colors.grey
-                )
-              )
+                  Container(
+                   width : 150,
+                   height: 50,
+                   child: ElevatedButton(
+                       onPressed: () async {
+                         if(URI.isNotEmpty && appkit.userAddress !=""){
+                           setState(() {
+                             Text_Error = "";
+                             Read_Text = "Check Phase...";
+                           });
+                           final Tx = parseErc681(URI);
+                           URI = "";
+                           CheckTx(context,Tx).then((result) async{
+                             await Future.delayed(const Duration(milliseconds: 1500));
+                             setState(() {
+                               i_situ = 0;
+                               Read_Text = "";
+                             });
+                           });
+                         }
+                       },
+                       child: Text(
+                         "Check",
+                         style: TextStyle(
+                           fontSize: 24.0,
+                         ),
+                       ),
+                       style: ElevatedButton.styleFrom(
+                           backgroundColor: (URI.isNotEmpty && appkit.userAddress !="") ? Colors.deepPurple[200] : Colors.grey
+                       )
+                   )
+                  )
                   :
               const Padding(padding: EdgeInsets.all(10)),
             ],
@@ -221,6 +226,7 @@ class _MPSsState_Read extends State<Page1> {
   SizedBox Camera_Viewer(){
     switch(i_situ){
       case 0:
+        //開始画面
         return SizedBox(
             height:300,
             width:300,
@@ -246,6 +252,7 @@ class _MPSsState_Read extends State<Page1> {
             )
         );
       case 1:
+        //読み取り
         return SizedBox(
           height:300,
           width:300,
@@ -288,7 +295,7 @@ class _MPSsState_Read extends State<Page1> {
                     await _controller.start();
                     setState(() {
                       Text_Error = "";
-                      i_situ = 1; // 読み取り待機に戻す
+                      i_situ = 0; // 読み取り待機に戻す
                     });
                   }
                 } else {
