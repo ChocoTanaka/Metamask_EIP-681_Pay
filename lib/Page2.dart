@@ -30,8 +30,11 @@ class _MPSsState_Write extends State<Page2> {
   bool isShow = false;
   bool isTag = false;
 
-  String URI(BigInt Wei, String tag){
+  String URI(String Wei, String tag){
     String uri = 'ethereum:${coin_now.Address}@${chain_now.ChainId}/transfer?address=${appkit.userAddress}&uint256=$Wei';
+    if(coin_now.Div !=0){
+      uri += "e${coin_now.Div}";
+    }
     if(tag.isNotEmpty && tag.length ==16){
       uri += '&tag=$tag';
     }
@@ -245,7 +248,7 @@ class _MPSsState_Write extends State<Page2> {
                         ),
                         inputFormatters: [
                           // 修正版：小数点以下が0桁（ドットだけ）の状態も許容する
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,6}')),
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,8}')),
                         ]
                       ),
                     ),
@@ -299,10 +302,9 @@ class _MPSsState_Write extends State<Page2> {
                       onPressed:() {
                         if(appkit.userAddress != "" && amount !=0){
                           setState(() {
-                            final BigInt amountWei = parseInputToBigInt(amount,coin_now.Div);
                             final tag = tag1_s+tag2_s+tag3_s+tag4_s;
                             final uri =
-                                URI(amountWei,tag);
+                                URI(amount,tag);
                             print(uri);
                             generatedUri = uri;
 

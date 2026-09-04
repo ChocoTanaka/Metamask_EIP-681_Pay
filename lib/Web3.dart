@@ -91,7 +91,9 @@ Stablecoin checkAddress(String address){
 String Checkname(String address){
   for (var chain in Blockchain.values){
     for(var coin in chain.Coins){
-      if(coin.Address == address){
+      print("address"+ address.toLowerCase());
+      print("check" + coin.Address.toLowerCase());
+      if(coin.Address.toLowerCase() == address.toLowerCase()){
         return coin.Name;
       }
     }
@@ -166,7 +168,7 @@ UriCheckError? validateRawUri(String uri) {
 
     bool isvaliedtoken = false;
     for(var coin in chain_v.Coins){
-      if(coin.Address == req.token){
+      if(coin.Address.toLowerCase() == req.token.toLowerCase()){
         isvaliedtoken = true;
         break;
       }
@@ -184,6 +186,7 @@ UriCheckError? validateRawUri(String uri) {
       return UriCheckError.invalidFunction;
     }
   }catch(e){
+    print(e);
     return UriCheckError.invalidFormat;
   }
 
@@ -310,12 +313,33 @@ BigInt parseScientific(String input) {
     return BigInt.parse(input);
   }
 
-  final parts = input.split('e');
-  final base = BigInt.parse(parts[0]);
+  final parts = input.toLowerCase().split('e');
+  final mantissa = parts[0];
   final exponent = int.parse(parts[1]);
 
-  return base * BigInt.from(10).pow(exponent);
+  // 小数点を除去
+  final decimalIndex = mantissa.indexOf('.');
+  int decimalPlaces = 0;
+
+  String digits;
+  if (decimalIndex >= 0) {
+    decimalPlaces = mantissa.length - decimalIndex - 1;
+    digits = mantissa.replaceAll('.', '');
+  } else {
+    digits = mantissa;
+  }
+
+  final base = BigInt.parse(digits);
+
+  final effectiveExponent = exponent - decimalPlaces;
+
+  if (effectiveExponent >= 0) {
+    return base * BigInt.from(10).pow(effectiveExponent);
+  } else {
+    return base ~/ BigInt.from(10).pow(-effectiveExponent);
+  }
 }
+
 
 String ShowAmount(BigInt Amount, int Div){
   final s = Amount.toString().padLeft(Div + 1, '0');

@@ -233,7 +233,12 @@ class _MPSsState_Read extends State<Page1> {
             child: Center(
                 child:ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
+                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey,
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6), // 余白
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2), // 角丸の半径
+                    ),
+                    fixedSize: const Size(200, 75), // 幅200、高さ50に固定
                   ),
                   onPressed: () async{
                     if(appkit.userAddress !="") {
@@ -336,24 +341,33 @@ class _MPSsState_Read extends State<Page1> {
             height:300,
             width:300,
             child: Center(
-                child:ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      if(appkit.userAddress !=""){
-                        i_situ = 1;
-                      }
-                    });
-                  },
-                  child: Text(
-                    "Read_Start",
-                    style: TextStyle(
-                      fontSize: 36.0,
+                child:Container(
+                  width: 200,
+                  height: 75,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: appkit.userAddress !="" ? Colors.deepPurple[200] : Colors.grey,
+                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6), // 余白
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0), // 角丸の半径
+                      ),
+                      fixedSize: const Size(250, 50), // 幅200、高さ50に固定
                     ),
-                  ),
-                )
+                    onPressed: () {
+                      setState(() {
+                        if(appkit.userAddress !=""){
+                          i_situ = 1;
+                        }
+                      });
+                    },
+                    child: Text(
+                      "Read_Start",
+                      style: TextStyle(
+                        fontSize: 36.0,
+                      ),
+                    ),
+                  )
+                ),
             )
         );
     }

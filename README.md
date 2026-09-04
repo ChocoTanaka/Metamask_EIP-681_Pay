@@ -27,7 +27,7 @@ ERC-681 QR codes can be scanned using various wallets.
 
 ## Update
 
-**update : Add notification** 
+**update : Correction to the Exponential Notation Problem** 
 
 For now, I support
 
